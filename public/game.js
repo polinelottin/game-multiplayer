@@ -68,8 +68,10 @@ const createGame = () => {
         }
     }
 
-    const movePlayer = ({ playerId, keyPressed }) => {
-        const player = state.players[playerId]
+    const movePlayer = (command) => {
+        notifyAll(command)
+
+        const player = state.players[command.playerId]
 
         const moves = {
             'ArrowLeft': () => {
@@ -86,8 +88,8 @@ const createGame = () => {
             }
         }
         
-        if (player && moves[keyPressed]) {
-            moves[keyPressed](playerId)
+        if (player && moves[command.keyPressed]) {
+            moves[command.keyPressed](command.playerId)
             checkForFruitCollision(player)
         }
     }

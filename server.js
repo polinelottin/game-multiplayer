@@ -5,17 +5,17 @@ import createGame from './public/game.js'
 
 const app = express()
 const server = http.createServer(app)
-const socketio = new Server(server);
+const socket = new Server(server);
 
 app.use(express.static('public'))
 
 const game = createGame()
 game.subscribe(command => {
     console.log(`> Emitting ${command.type}`)
-    socketio.emit(command.type, command)
+    socket.emit(command.type, command)
 })
 
-socketio.on('connection', socket => {
+socket.on('connection', socket => {
     const playerId = socket.id
     console.log(`> Player connected: ${playerId}`)
 
@@ -26,6 +26,14 @@ socketio.on('connection', socket => {
     socket.on('disconnect', () => {
         game.removePlayer({ playerId })
         console.log(`> Player disconnected: ${playerId}`)
+    })
+
+    socket.on('move-player', command => {
+        command.playerId = playerId
+        command.type = 'move-player'
+    
+        console.log(`moving ${command.playerId}`)
+        game.movePlayer(command)
     })
 })
 
