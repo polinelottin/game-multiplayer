@@ -26,12 +26,33 @@
 
             const createGame = () => {
                 const state = {
-                    players: {
-                        player1: { x: 1, y: 1 },
-                        player2: { x: 9, y: 9 }
-                    },
-                    fruits: {
-                        fruit1: { x: 3, y: 1 }
+                    players: {},
+                    fruits: {}
+                }
+
+                const addPlayer = ({ playerId, x, y}) => {
+                    state.players[playerId] = { x, y }
+                }
+
+                const removePlayer = ({ playerId }) => {
+                    delete state.players[playerId]
+                }
+
+                const addFruit = ({ fruitId, x, y}) => {
+                    state.fruits[fruitId] = { x, y }
+                }
+
+                const removeFruit = ({ fruitId }) => {
+                    delete state.fruits[fruitId]
+                }
+
+                const checkForFruitCollision = player => {
+                    for (fruitId in state.fruits) {
+                        const { x, y } = state.fruits[fruitId]
+
+                        if (x === player.x && y === player.y) {
+                            removeFruit({ fruitId }) 
+                        }
                     }
                 }
 
@@ -40,26 +61,30 @@
 
                     const moves = {
                         'ArrowLeft': (playerId) => {
-                            if (player.x === 0) return
-                            state.players[playerId].x = player.x - 1
-                        },
-                        'ArrowDown': (playerId) => {
-                            if (player.y === 9) return
-                            state.players[playerId].y = player.y + 1
-                        },
-                        'ArrowUp': (playerId) => {
-                            if (player.y === 0) return
-                            state.players[playerId].y = player.y - 1
+                            player.x = Math.max(player.x - 1, 0)
                         },
                         'ArrowRight': (playerId) => {
-                            if (player.x === 9) return
-                            state.players[playerId].x = player.x + 1
+                            player.x = Math.min(player.x + 1, screen.width - 1)
+                        },
+                        'ArrowDown': (playerId) => {
+                            player.y = Math.min(player.y + 1, screen.height - 1) 
+                        },
+                        'ArrowUp': (playerId) => {
+                            player.y = Math.max(player.y - 1, 0)
                         }
                     }
-                    moves[keyPressed](playerId)
+                    
+                    if (player && moves[keyPressed]) {
+                        moves[keyPressed](playerId)
+                        checkForFruitCollision(player)
+                    }
                 }
 
                 return {
+                    addPlayer,
+                    removePlayer,
+                    addFruit,
+                    addFruit,
                     movePlayer,
                     state
                 }
@@ -95,6 +120,10 @@
             const game = createGame()
             const keyboardListener = createKeyboardListener()
             keyboardListener.subscribe(game.movePlayer)
+
+            game.addPlayer({
+                playerId: currentPlayer, x: 5, y: 5
+            })
 
             const renderScreen = () => {
                 context.clearRect(0, 0, 10, 10)
