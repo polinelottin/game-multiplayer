@@ -1,10 +1,12 @@
-const renderScreen = (screen, { players, fruits }, requestAnimationFrame) => {
+const renderScreen = (screen, game, requestAnimationFrame, currentPlayerId) => {
+    const { players, fruits } = game.state
+
     const context = screen.getContext('2d')
     context.clearRect(0, 0, screen.width, screen.height)
 
     for(const playerId in players) {
         const player = players[playerId]
-        context.fillStyle = 'black'
+        context.fillStyle = playerId === currentPlayerId ? 'pink' : 'black'
         context.fillRect(player.x, player.y, 1, 1)
     }
 
@@ -14,7 +16,7 @@ const renderScreen = (screen, { players, fruits }, requestAnimationFrame) => {
         context.fillRect(fruit.x, fruit.y, 1, 1)
     }    
     requestAnimationFrame(() => {
-        renderScreen(screen, { players, fruits }, requestAnimationFrame)
+        renderScreen(screen, game, requestAnimationFrame, currentPlayerId)
     })    
 }
 
