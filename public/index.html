@@ -20,24 +20,35 @@
         <canvas id="screen" height="10" width="10"></canvas>
         
         <script type="module">
-            import createGame from './game.js'
             import createKeyboardListener from './keyboardListener.js'
             import renderScreen from './renderScreen.js'
+            import createGame from './game.js'
 
-            const keyboardListener = createKeyboardListener(document)
             const game = createGame()
+            const keyboardListener = createKeyboardListener(document)
             keyboardListener.subscribe(game.movePlayer)
 
             const screen = document.getElementById('screen')
-            
-            renderScreen(screen, game.state, requestAnimationFrame)       
-
+            renderScreen(screen, game, requestAnimationFrame)  
+    
             const socket = io()
 
             socket.on('connect', () => {
                 const playerId = socket.id
                 console.log(`Player ${playerId} connected`)
             })  
+
+            socket.on('setup', state => {
+                game.setState(state)
+            })
+
+            socket.on('add-player', command => {
+                game.addPlayer(command)  
+            })
+
+            socket.on('remove-player', command => {
+                game.removePlayer(command)
+            })
         </script>
     </body>
 </html>

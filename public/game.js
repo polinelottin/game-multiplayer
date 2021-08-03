@@ -8,12 +8,46 @@ const createGame = () => {
         }
     }
 
+    const observers = []
+
+    const setState = newState => {
+        Object.assign(state, newState)
+    }
+
+    const subscribe = observerFunction => {
+        observers.push(observerFunction)
+    }
+
+    const notifyAll = command => {
+        for (const observer of observers) {
+            observer(command)
+        }
+    }
+
+    const randomPosition = max => Math.floor(Math.random() * max)
+
     const addPlayer = ({ playerId, x, y}) => {
-        state.players[playerId] = { x, y }
+        const player = {
+            x: x ? x : randomPosition(state.screen.width),
+            y: y ? y : randomPosition(state.screen.height)
+        }
+        state.players[playerId] = player
+
+        notifyAll({
+            type: 'add-player',
+            playerId,
+            x: player.x,
+            y: player.y
+        })
     }
 
     const removePlayer = ({ playerId }) => {
         delete state.players[playerId]
+
+        notifyAll({
+            type: 'remove-player',
+            playerId
+        })
     }
 
     const addFruit = ({ fruitId, x, y}) => {
@@ -59,12 +93,14 @@ const createGame = () => {
     }
 
     return {
+        state,
         addPlayer,
         removePlayer,
         addFruit,
         removeFruit,
         movePlayer,
-        state
+        subscribe,
+        setState
     }
 }
 

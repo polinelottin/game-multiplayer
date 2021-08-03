@@ -1,4 +1,6 @@
-const renderScreen = (screen, { players, fruits }, requestAnimationFrame) => {
+const renderScreen = (screen, game, requestAnimationFrame) => {
+    const { players, fruits } = game.state
+
     const context = screen.getContext('2d')
     context.clearRect(0, 0, screen.width, screen.height)
 
@@ -14,7 +16,7 @@ const renderScreen = (screen, { players, fruits }, requestAnimationFrame) => {
         context.fillRect(fruit.x, fruit.y, 1, 1)
     }    
     requestAnimationFrame(() => {
-        renderScreen(screen, { players, fruits }, requestAnimationFrame)
+        renderScreen(screen, game, requestAnimationFrame)
     })    
 }
 
