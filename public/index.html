@@ -53,6 +53,10 @@
                 game.addPlayer(command)  
             })
 
+            socket.on('add-fruit', command => {
+                game.addFruit(command)  
+            })
+
             socket.on('remove-player', command => {
                 game.removePlayer(command)
             })

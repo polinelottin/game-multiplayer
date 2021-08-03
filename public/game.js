@@ -10,6 +10,10 @@ const createGame = () => {
 
     const observers = []
 
+    const start = () => {
+        setInterval(addFruit, 2000)
+    }
+
     const setState = newState => {
         Object.assign(state, newState)
     }
@@ -50,8 +54,22 @@ const createGame = () => {
         })
     }
 
-    const addFruit = ({ fruitId, x, y}) => {
-        state.fruits[fruitId] = { x, y }
+    const addFruit = (command = {}) => {
+        const fruitId = command.fruitId ? command.fruitId : randomPosition(1000000)
+        const fruit = {
+            x: fruitId.x ? fruitId.x : randomPosition(state.screen.width),
+            y: fruitId.y ? fruitId.y : randomPosition(state.screen.height)
+        }
+
+        state.fruits[fruitId] = fruit
+
+        notifyAll({
+            type: 'add-fruit',
+            fruitId,
+            x: fruit.x,
+            y: fruit.y
+        })
+
     }
 
     const removeFruit = ({ fruitId }) => {
@@ -102,7 +120,8 @@ const createGame = () => {
         removeFruit,
         movePlayer,
         subscribe,
-        setState
+        setState,
+        start
     }
 }
 
