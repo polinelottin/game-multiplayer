@@ -35,11 +35,12 @@ const createGame = () => {
 
     const randomPosition = max => Math.floor(Math.random() * max)
 
-    const addPlayer = ({ playerId, x, y, admin}) => {
+    const addPlayer = ({ playerId, x, y, admin, points}) => {
         const player = {
             x: x ? x : randomPosition(state.screen.width),
             y: y ? y : randomPosition(state.screen.height),
-            admin: admin ? admin : Object.keys(state.players).length === 0
+            admin: admin ? admin : Object.keys(state.players).length === 0,
+            points: points ? points : 0
         }
         state.players[playerId] = player
 
@@ -95,14 +96,19 @@ const createGame = () => {
         })
     }
 
-    const checkForFruitCollision = player => {
+    const checkForFruitCollision = playerId => {
+        const player = state.players[playerId]
+
         for (const fruitId in state.fruits) {
             const { x, y } = state.fruits[fruitId]
 
             if (x === player.x && y === player.y) {
+                state.players[playerId].points = state.players[playerId].points + 1 
                 removeFruit({ fruitId }) 
             }
         }
+
+        console.log(`Points: ${state.players[playerId].points}`)
     }
 
     const movePlayer = (command) => {
@@ -127,7 +133,7 @@ const createGame = () => {
         
         if (player && moves[command.keyPressed]) {
             moves[command.keyPressed](command.playerId)
-            checkForFruitCollision(player)
+            checkForFruitCollision(command.playerId)
         }
     }
 
