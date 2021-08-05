@@ -1,3 +1,5 @@
+const MAX_SCORE = 10
+
 const createGame = () => {
     const state = {
         players: {},
@@ -10,7 +12,15 @@ const createGame = () => {
     const observers = []
     const runtime = {}
 
+    const resetScore = () => {
+        for (const playerId in state.players) {
+            state.players[playerId].score = 0 
+        }
+        notifyAll({ type: 'reset-score' })
+    }
+
     const start = () => {
+        resetScore()
         runtime.addFruits = setInterval(addFruit, 2000)
     }
 
@@ -35,11 +45,12 @@ const createGame = () => {
 
     const randomPosition = max => Math.floor(Math.random() * max)
 
-    const addPlayer = ({ playerId, x, y, admin}) => {
+    const addPlayer = ({ playerId, x, y, admin, score}) => {
         const player = {
             x: x ? x : randomPosition(state.screen.width),
             y: y ? y : randomPosition(state.screen.height),
-            admin: admin ? admin : Object.keys(state.players).length === 0
+            admin: admin ? admin : Object.keys(state.players).length === 0,
+            score: score ? score : 0
         }
         state.players[playerId] = player
 
@@ -57,6 +68,10 @@ const createGame = () => {
             type: 'remove-player',
             playerId
         })
+
+        if (Object.keys(state.players).length === 0) {
+            stop()
+        }
     }
 
     const addFruit = (command = {}) => {
@@ -91,12 +106,34 @@ const createGame = () => {
         })
     }
 
-    const checkForFruitCollision = player => {
-        for (const fruitId in state.fruits) {
-            const { x, y } = state.fruits[fruitId]
+    const getPlayer = playerId => state.players[playerId]
+    const getFruit = fruitId => state.fruits[fruitId]
 
-            if (x === player.x && y === player.y) {
+    const samePosition = (obj1, obj2) => obj1.x === obj2.x && obj1.y === obj2.y
+
+    const reachedMaxScore = playerId => {
+        const player = getPlayer(playerId)
+        return state.players[playerId].score === MAX_SCORE
+    }
+
+    const countScore = ({ playerId }) => {
+        const player = getPlayer(playerId)
+        player.score += 1 
+    }
+
+    const checkForFruitCollision = playerId => {
+        const player = getPlayer(playerId)
+
+        for (const fruitId in state.fruits) {
+            const fruit = getFruit(fruitId)
+
+            if (samePosition(player, fruit)) {
                 removeFruit({ fruitId }) 
+                countScore({ playerId })
+            }
+
+            if (reachedMaxScore(playerId)){
+                stop()
             }
         }
     }
@@ -104,7 +141,8 @@ const createGame = () => {
     const movePlayer = (command) => {
         notifyAll(command)
 
-        const player = state.players[command.playerId]
+        const { playerId, keyPressed } = command
+        const player = getPlayer(playerId)
 
         const moves = {
             'ArrowLeft': () => {
@@ -121,10 +159,10 @@ const createGame = () => {
             }
         }
         
-        if (player && moves[command.keyPressed]) {
-            moves[command.keyPressed](command.playerId)
-            checkForFruitCollision(player)
-        }
+        if (player && moves[keyPressed]) {
+            moves[keyPressed](playerId)
+            checkForFruitCollision(playerId)
+        }        
     }
 
     return {
@@ -137,7 +175,8 @@ const createGame = () => {
         subscribe,
         setState,
         start,
-        stop
+        stop,
+        resetScore
     }
 }
 

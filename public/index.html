@@ -3,8 +3,16 @@
     <head>
         <meta charset="utf-8">
         <title>a game :)</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
         <style>
+            body {
+                font-family: 'Press Start 2P', cursive;
+                margin: 40px 0 0 0;
+            }
+
             #screen {
                 border: 5px solid #CCC;
                 image-rendering: pixelated;
@@ -13,17 +21,41 @@
                 width: 400px;
                 height: 400px;
             }
+
+            #game-container {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-evenly;
+                padding: 8px;
+            }
+
+            #score-table tr.header td {
+                border-bottom: 1px solid #CCC;
+                padding-bottom: 8px;
+            }
+
+            #score-table .current-player {
+                color: pink;
+            }
+
+            #score-table td {
+                padding-top: 5px;
+                padding-bottom: 5px;
+                font-size: 13px;
+            }
         </style>
         <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     </head>
     <body>
-        <canvas id="screen" height="10" width="10"></canvas>
-
+        <div id="game-container">
+            <canvas id="screen" height="10" width="10"></canvas>
+            <table id="score-table"></table>
+        </div>
         <div id="control-panel" hidden>
             <button id="start">Começar</button>
             <button id="stop" disabled>Parar</button>
         <div>
-        
+
         <script type="module">
             import createKeyboardListener from './keyboardListener.js'
             import renderScreen from './renderScreen.js'
@@ -31,7 +63,8 @@
 
             const game = createGame()
             const keyboardListener = createKeyboardListener(document)
-            const screen = document.getElementById('screen')
+            const canvas = document.getElementById('screen')
+            const scoreTable = document.getElementById('score-table')
             const controlPanel = document.getElementById('control-panel')
 
             const socket = io()
@@ -39,8 +72,6 @@
             socket.on('connect', () => {
                 const playerId = socket.id
                 console.log(`Player ${playerId} connected`)
-
-                renderScreen(screen, game, requestAnimationFrame, playerId)  
             })  
 
             socket.on('setup', state => {
@@ -57,6 +88,8 @@
                 if (state.players[playerId].admin) {
                     controlPanel.hidden = false
                 }
+
+                renderScreen(canvas, scoreTable, game, requestAnimationFrame, playerId)  
             })
 
             socket.on('add-player', command => {
@@ -79,6 +112,10 @@
                 if(socket.id !== command.playerId) {
                     game.movePlayer(command)
                 }
+            })
+
+            socket.on('reset-score', () => {
+                game.resetScore()
             })
         </script>
     </body>
