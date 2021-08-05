@@ -107,8 +107,6 @@ const createGame = () => {
                 removeFruit({ fruitId }) 
             }
         }
-
-        console.log(`Points: ${state.players[playerId].points}`)
     }
 
     const movePlayer = (command) => {

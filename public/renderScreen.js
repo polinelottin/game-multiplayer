@@ -9,7 +9,7 @@ const renderScoreTable = (scoreTable, game, currentPlayerId) => {
         const player = game.state.players[playerId]
 
         scoreTableInnerHTML += `
-            <tr ${player.playerId === currentPlayerId ? 'class="current-player"' : ''}>
+            <tr ${playerId === currentPlayerId ? 'class="current-player"' : ''}>
                 <td>${playerId}</td>
                 <td>${player.points}</td>
             </tr>

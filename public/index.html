@@ -10,6 +10,7 @@
         <style>
             body {
                 font-family: 'Press Start 2P', cursive;
+                margin: 40px 0 0 0;
             }
 
             #screen {
@@ -24,7 +25,23 @@
             #game-container {
                 display: flex;
                 align-items: flex-start;
+                justify-content: space-evenly;
                 padding: 8px;
+            }
+
+            #score-table tr.header td {
+                border-bottom: 1px solid #CCC;
+                padding-bottom: 8px;
+            }
+
+            #score-table .current-player {
+                color: pink;
+            }
+
+            #score-table td {
+                padding-top: 5px;
+                padding-bottom: 5px;
+                font-size: 13px;
             }
         </style>
         <script src="http://localhost:3000/socket.io/socket.io.js"></script>
