@@ -8,13 +8,14 @@ const createGame = () => {
         }
     }
     const observers = []
+    const runtime = {}
 
     const start = () => {
-        state.runtime = setInterval(addFruit, 2000)
+        runtime.addFruits = setInterval(addFruit, 2000)
     }
 
     const stop = () => {
-        clearInterval(state.runtime);
+        clearInterval(runtime.addFruits);
         removeAllFruits()
     }
 
