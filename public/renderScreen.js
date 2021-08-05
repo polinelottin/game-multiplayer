@@ -11,7 +11,7 @@ const renderScoreTable = (scoreTable, game, currentPlayerId) => {
         scoreTableInnerHTML += `
             <tr ${playerId === currentPlayerId ? 'class="current-player"' : ''}>
                 <td>${playerId}</td>
-                <td>${player.points}</td>
+                <td>${player.score}</td>
             </tr>
         `
     }
