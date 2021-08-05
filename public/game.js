@@ -62,8 +62,8 @@ const createGame = () => {
     const addFruit = (command = {}) => {
         const fruitId = command.fruitId ? command.fruitId : randomPosition(1000000)
         const fruit = {
-            x: fruitId.x ? fruitId.x : randomPosition(state.screen.width),
-            y: fruitId.y ? fruitId.y : randomPosition(state.screen.height)
+            x: command.x ? command.x : randomPosition(state.screen.width),
+            y: command.y ? command.y : randomPosition(state.screen.height)
         }
 
         state.fruits[fruitId] = fruit
@@ -74,7 +74,6 @@ const createGame = () => {
             x: fruit.x,
             y: fruit.y
         })
-
     }
 
     const removeAllFruits = () => {

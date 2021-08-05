@@ -64,8 +64,7 @@
             })
 
             socket.on('add-fruit', command => {
-                console.log(`Client add fruit ${command}`)
-                game.addFruit(command)  
+                game.addFruit(command)   
             })
 
             socket.on('remove-player', command => {
