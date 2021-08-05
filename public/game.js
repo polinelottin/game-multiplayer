@@ -10,7 +10,15 @@ const createGame = () => {
     const observers = []
     const runtime = {}
 
+    const resetPoints = () => {
+        for (const playerId in state.players) {
+            state.players[playerId].points = 0 
+        }
+        notifyAll({ type: 'reset-points' })
+    }
+
     const start = () => {
+        resetPoints()
         runtime.addFruits = setInterval(addFruit, 2000)
     }
 
@@ -145,7 +153,8 @@ const createGame = () => {
         subscribe,
         setState,
         start,
-        stop
+        stop,
+        resetPoints
     }
 }
 

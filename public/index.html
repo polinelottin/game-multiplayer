@@ -113,6 +113,10 @@
                     game.movePlayer(command)
                 }
             })
+
+            socket.on('reset-points', () => {
+                game.resetPoints()
+            })
         </script>
     </body>
 </html>
