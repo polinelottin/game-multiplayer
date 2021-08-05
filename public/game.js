@@ -7,11 +7,15 @@ const createGame = () => {
             height: 10
         }
     }
-
     const observers = []
 
     const start = () => {
-        setInterval(addFruit, 2000)
+        state.runtime = setInterval(addFruit, 2000)
+    }
+
+    const stop = () => {
+        clearInterval(state.runtime);
+        removeAllFruits()
     }
 
     const setState = newState => {
@@ -72,8 +76,19 @@ const createGame = () => {
 
     }
 
+    const removeAllFruits = () => {
+        for (const fruitId in state.fruits) {
+            removeFruit({ fruitId })
+        }
+    }
+
     const removeFruit = ({ fruitId }) => {
         delete state.fruits[fruitId]
+
+        notifyAll({
+            type: 'remove-fruit',
+            fruitId
+        })
     }
 
     const checkForFruitCollision = player => {
@@ -121,7 +136,8 @@ const createGame = () => {
         movePlayer,
         subscribe,
         setState,
-        start
+        start,
+        stop
     }
 }
 
