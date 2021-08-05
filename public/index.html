@@ -18,8 +18,11 @@
     </head>
     <body>
         <canvas id="screen" height="10" width="10"></canvas>
-        <button id="start">Começar</button>
-        <button id="stop" disabled>Parar</button>
+
+        <div id="control-panel" hidden>
+            <button id="start">Começar</button>
+            <button id="stop" disabled>Parar</button>
+        <div>
         
         <script type="module">
             import createKeyboardListener from './keyboardListener.js'
@@ -29,6 +32,7 @@
             const game = createGame()
             const keyboardListener = createKeyboardListener(document)
             const screen = document.getElementById('screen')
+            const controlPanel = document.getElementById('control-panel')
 
             const socket = io()
 
@@ -49,6 +53,10 @@
                 })
 
                 game.setState(state)
+
+                if (state.players[playerId].admin) {
+                    controlPanel.hidden = false
+                }
             })
 
             socket.on('add-player', command => {
@@ -56,6 +64,7 @@
             })
 
             socket.on('add-fruit', command => {
+                console.log(`Client add fruit ${command}`)
                 game.addFruit(command)  
             })
 

@@ -35,18 +35,18 @@ const createGame = () => {
 
     const randomPosition = max => Math.floor(Math.random() * max)
 
-    const addPlayer = ({ playerId, x, y}) => {
+    const addPlayer = ({ playerId, x, y, admin}) => {
         const player = {
             x: x ? x : randomPosition(state.screen.width),
-            y: y ? y : randomPosition(state.screen.height)
+            y: y ? y : randomPosition(state.screen.height),
+            admin: admin ? admin : Object.keys(state.players).length === 0
         }
         state.players[playerId] = player
 
         notifyAll({
             type: 'add-player',
             playerId,
-            x: player.x,
-            y: player.y
+            ...player
         })
     }
 
