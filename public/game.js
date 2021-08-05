@@ -57,6 +57,10 @@ const createGame = () => {
             type: 'remove-player',
             playerId
         })
+
+        if (Object.keys(state.players).length === 0) {
+            stop()
+        }
     }
 
     const addFruit = (command = {}) => {
