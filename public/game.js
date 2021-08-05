@@ -103,7 +103,7 @@ const createGame = () => {
             const { x, y } = state.fruits[fruitId]
 
             if (x === player.x && y === player.y) {
-                state.players[playerId].points = state.players[playerId].points + 1 
+                state.players[playerId].points += 1 
                 removeFruit({ fruitId }) 
             }
         }
