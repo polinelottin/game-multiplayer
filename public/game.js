@@ -7,11 +7,16 @@ const createGame = () => {
             height: 10
         }
     }
-
     const observers = []
+    const runtime = {}
 
     const start = () => {
-        setInterval(addFruit, 2000)
+        runtime.addFruits = setInterval(addFruit, 2000)
+    }
+
+    const stop = () => {
+        clearInterval(runtime.addFruits);
+        removeAllFruits()
     }
 
     const setState = newState => {
@@ -30,18 +35,18 @@ const createGame = () => {
 
     const randomPosition = max => Math.floor(Math.random() * max)
 
-    const addPlayer = ({ playerId, x, y}) => {
+    const addPlayer = ({ playerId, x, y, admin}) => {
         const player = {
             x: x ? x : randomPosition(state.screen.width),
-            y: y ? y : randomPosition(state.screen.height)
+            y: y ? y : randomPosition(state.screen.height),
+            admin: admin ? admin : Object.keys(state.players).length === 0
         }
         state.players[playerId] = player
 
         notifyAll({
             type: 'add-player',
             playerId,
-            x: player.x,
-            y: player.y
+            ...player
         })
     }
 
@@ -57,8 +62,8 @@ const createGame = () => {
     const addFruit = (command = {}) => {
         const fruitId = command.fruitId ? command.fruitId : randomPosition(1000000)
         const fruit = {
-            x: fruitId.x ? fruitId.x : randomPosition(state.screen.width),
-            y: fruitId.y ? fruitId.y : randomPosition(state.screen.height)
+            x: command.x ? command.x : randomPosition(state.screen.width),
+            y: command.y ? command.y : randomPosition(state.screen.height)
         }
 
         state.fruits[fruitId] = fruit
@@ -69,11 +74,21 @@ const createGame = () => {
             x: fruit.x,
             y: fruit.y
         })
+    }
 
+    const removeAllFruits = () => {
+        for (const fruitId in state.fruits) {
+            removeFruit({ fruitId })
+        }
     }
 
     const removeFruit = ({ fruitId }) => {
         delete state.fruits[fruitId]
+
+        notifyAll({
+            type: 'remove-fruit',
+            fruitId
+        })
     }
 
     const checkForFruitCollision = player => {
@@ -121,7 +136,8 @@ const createGame = () => {
         movePlayer,
         subscribe,
         setState,
-        start
+        start,
+        stop
     }
 }
 
